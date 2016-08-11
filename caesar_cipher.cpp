@@ -1,0 +1,92 @@
+#include <iostream>
+#include <sstream>
+#include <ctype.h>
+
+using namespace std;
+
+void decode(istream &in, ostream &out, int shift);
+char decodeChar(char c, int shift);
+int analyzeShift(istream &in);
+
+double englishLetterFrequencies[26] = {
+  0.812, 0.149, 0.271, 0.432,
+  0.1202, 0.230, 0.203, 0.592,
+  0.731, 0.010, 0.069, 0.398,
+  0.261, 0.695, 0.768, 0.182,
+  0.011, 0.602, 0.628, 0.910,
+  0.288, 0.111, 0.209, 0.017,
+  0.211, 0.007
+};
+
+int main(int argc, char *argv[]) {
+  stringstream buf;
+  buf << cin.rdbuf();
+
+  int shift;
+  if (argc > 2 && strcmp(argv[1], "-s") == 0) {
+    shift = atoi(argv[2]);
+  } else {
+    shift = -analyzeShift(buf);
+    buf.clear();
+    buf.seekg(0);
+  }
+
+  decode(buf, cout, shift);
+
+  return 0;
+}
+
+
+int analyzeShift(istream &in) {
+  int letterCounts[26] = {0};
+  int totalLetters = 0;
+
+  char c;
+  while (in.get(c)) {
+    if (isalpha(c)) {
+      int letter = tolower(c) - 'a';
+      letterCounts[letter]++;
+      totalLetters++;
+    }
+  }
+
+  double letterFrequencies[26];
+  for (int i=0; i < 26; i++) {
+    letterFrequencies[i] = (double) letterCounts[i] / totalLetters;
+  }
+
+  double minError;
+  int bestShift;
+  for (int s=0; s < 26; s++) {
+    double error = 0.0;
+    for (int i=0; i < 26; i++) {
+      int j = (i + s) % 26;
+      double diff = letterFrequencies[j] - englishLetterFrequencies[i];
+      error += diff * diff;
+    }
+    if (s == 0 || error < minError) {
+      minError = error;
+      bestShift = s;
+    }
+  }
+
+  return bestShift;
+}
+
+void decode(istream &in, ostream &out, int shift) {
+  char c;
+  while (in.get(c)) {
+    out << decodeChar(c, shift);
+  }
+}
+
+char decodeChar(char c, int shift) {
+  if (isalpha(c)) {
+    char base = islower(c) ? 'a' : 'A';
+    int letter = c - base;
+    int newLetter = (letter + shift) % 26;
+    if (newLetter < 0) newLetter += 26;
+    return base + newLetter;
+  }
+  return c;
+}
