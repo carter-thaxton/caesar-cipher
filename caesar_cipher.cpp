@@ -8,15 +8,17 @@ void decode(istream &in, ostream &out, int shift);
 char decodeChar(char c, int shift);
 int analyzeShift(istream &in);
 
+// https://en.wikipedia.org/wiki/Letter_frequency
 double englishLetterFrequencies[26] = {
-  0.812, 0.149, 0.271, 0.432,
-  0.1202, 0.230, 0.203, 0.592,
-  0.731, 0.010, 0.069, 0.398,
-  0.261, 0.695, 0.768, 0.182,
-  0.011, 0.602, 0.628, 0.910,
-  0.288, 0.111, 0.209, 0.017,
-  0.211, 0.007
+  0.08167, 0.01492, 0.02782, 0.04253,
+  0.12702, 0.02228, 0.02015, 0.06094,
+  0.06966, 0.00153, 0.00772, 0.04025,
+  0.02406, 0.06749, 0.07507, 0.01929,
+  0.00095, 0.05987, 0.06327, 0.09056,
+  0.02758, 0.00978, 0.02361, 0.00150,
+  0.01974, 0.00074
 };
+
 
 int main(int argc, char *argv[]) {
   stringstream buf;
